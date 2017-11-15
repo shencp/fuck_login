@@ -29,7 +29,8 @@ except:
     pass
 
 # 构造 Request headers
-agent = 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Mobile Safari/537.36'
+agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
+
 headers = {
     "Host": "www.zhihu.com",
     "Referer": "https://www.zhihu.com/",
@@ -44,16 +45,19 @@ try:
 except:
     print("Cookie 未能加载")
 
-
+# ------------------------------------------------------------------------------------------------------
+# @ get xsrf
 def get_xsrf():
     '''_xsrf 是一个动态变化的参数'''
     index_url = 'https://www.zhihu.com'
-    # 获取登录时需要用到的_xsrf
+    # @ _xsrf
     index_page = session.get(index_url, headers=headers)
     html = index_page.text
+    print(html)
     pattern = r'name="_xsrf" value="(.*?)"'
-    # 这里的_xsrf 返回的是一个list
     _xsrf = re.findall(pattern, html)
+    print('------------------------------------------------------------------------------------------------------')
+    print(_xsrf)
     return _xsrf[0]
 
 
@@ -87,7 +91,10 @@ def isLogin():
         return False
 
 
+# ------------------------------------------------------------------------------------------------------
+# @ login
 def login(secret, account):
+    # @ xsrf
     _xsrf = get_xsrf()
     headers["X-Xsrftoken"] = _xsrf
     headers["X-Requested-With"] = "XMLHttpRequest"
@@ -131,11 +138,13 @@ try:
     input = raw_input
 except:
     pass
+
+# ------------------------------------------------------------------------------------------------------
+# @ main
 if __name__ == '__main__':
     if isLogin():
-         print('您已经登录')
+        print('您已经登录')
     else:
-        # @
         account = input('请输入你的用户名\n>  ')
         secret = input("请输入你的密码\n>  ")
         login(secret, account)
